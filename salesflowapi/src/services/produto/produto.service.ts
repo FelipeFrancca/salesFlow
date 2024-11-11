@@ -19,7 +19,7 @@ export class ProdutoService {
   create(produto: Produto): Promise<Produto> {
     return this.produtoRepository.save(produto);
   }
- 
+
   async delete(id: number): Promise<boolean> {
     const produto = await this.produtoRepository.findOne({ where: { id } });
 
@@ -29,5 +29,17 @@ export class ProdutoService {
 
     await this.produtoRepository.remove(produto);
     return true;
+  }
+
+  async update(id: number, produtoData: Partial<Produto>): Promise<Produto | null> {
+    const produto = await this.produtoRepository.findOne({ where: { id } });
+
+    if (!produto) {
+      return null;
+    }
+
+    Object.assign(produto, produtoData);
+
+    return this.produtoRepository.save(produto);
   }
 }

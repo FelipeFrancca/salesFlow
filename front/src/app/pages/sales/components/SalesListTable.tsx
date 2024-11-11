@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { useRouter } from 'next/navigation';
+
 import api from "../../../../services/AppRoutes";
 import { Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from "@mui/material";
 import VisualizarIcon from '@mui/icons-material/Visibility';
@@ -10,6 +12,7 @@ const SalesListTable: React.FC = () => {
   const [sales, setSales] = useState<VendaType[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 4000]);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchSales = async () => {
@@ -98,6 +101,7 @@ const SalesListTable: React.FC = () => {
                 <TableCell>{`R$ ${lucro}`}</TableCell>
                 <TableCell align="right">
                   <Button
+                    onClick={() => router.push(`/pages/saleView/${sale.id}`)}
                     sx={{
                       backgroundColor: "#9CA3AF",
                       color: "#FFFFFF",

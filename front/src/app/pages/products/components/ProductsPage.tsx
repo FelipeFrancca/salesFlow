@@ -1,13 +1,16 @@
 "use client";
 
 import { FC, useState, useEffect } from "react";
-import { Button } from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from "@mui/material";
 import AddIcon from "@mui/icons-material/PostAdd";
 import { Spinner } from "@material-tailwind/react";
 import BrokenImageIcon from "@mui/icons-material/BrokenImage";
 import api from "../../../../services/AppRoutes";
 import { useRouter } from "next/navigation";
 import Slider from "@mui/material/Slider";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import Swal from "sweetalert2"; 
 
 const formatCurrency = (value: number | string): string => {
   const numberValue = typeof value === 'string' ? parseFloat(value) : value;
@@ -22,14 +25,16 @@ const ProductsPage = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 20000]);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [currentProduct, setCurrentProduct] = useState<ProdutoType | null>(null);
+  const [editedName, setEditedName] = useState<string>('');
+  const [editedValue, setEditedValue] = useState<number>(0);
   const router = useRouter();
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const response = await api.get<ApiResponse<ProdutoType[]>>("/produtos");
-        console.log("Resposta completa:", response);
-
         if (Array.isArray(response.data.data)) {
           setProducts(response.data.data);
         } else {
@@ -53,7 +58,6 @@ const ProductsPage = () => {
     );
   }
 
- 
   const filteredProducts = products.filter((product) => {
     const matchesTitle = product.produtoTitle.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesPrice = product.valor >= priceRange[0] && product.valor <= priceRange[1];
@@ -61,17 +65,91 @@ const ProductsPage = () => {
   });
 
   const ProductCard: FC<{ product: ProdutoType }> = ({ product }) => {
+    const [cart, setCart] = useState<ProdutoType[]>([]);
+
+    const handleAddToCart = (product: ProdutoType) => {
+      setCart((prevCart) => [...prevCart, product]);
+    };
+    
+    const handleEditProduct = (product: ProdutoType) => {
+      setCurrentProduct(product);
+      setEditedName(product.produtoTitle);
+      setEditedValue(product.valor);
+      setOpenDialog(true);
+    };
+
+    
+    const handleDeleteProduct = (productId: number) => {
+      Swal.fire({
+        title: 'Tem certeza?',
+        text: 'Você tem certeza de que deseja excluir este produto?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sim, excluir!',
+        cancelButtonText: 'Cancelar',
+        reverseButtons: true
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          try {
+            await api.delete(`/produtos/${productId}`);
+            setProducts(products.filter((prod) => prod.id !== productId)); 
+            Swal.fire('Produto excluído!', '', 'success');
+          } catch (error) {
+            console.log('Erro ao excluir produto:', error);
+            Swal.fire('Erro!', 'Ocorreu um erro ao excluir o produto.', 'error');
+          }
+        }
+      });
+    };
+
     return (
       <div className="w-52 p-4 bg-white rounded-lg shadow-md flex flex-col items-center justify-center text-center">
         <BrokenImageIcon style={{ fontSize: 50 }} className="text-gray-300" />
         <h3 className="text-lg font-semibold">{product.produtoTitle}</h3>
         <p className="text-purple-700">{formatCurrency(product.valor)}</p> {/* Aqui formata o valor */}
+        <div className="mt-2 flex gap-2">
+          <Button
+            onClick={() => handleEditProduct(product)}
+            variant="contained"
+            color="primary"
+            size="small"
+          >
+            <EditIcon />
+          </Button>
+          <Button
+            onClick={() => handleDeleteProduct(product.id)}
+            variant="contained"
+            color="error"
+            size="small"
+          >
+            <DeleteIcon />
+          </Button>
+        </div>
       </div>
     );
   };
 
   const handleAddProduct = () => {
-    router.push("/pages/cadastroProduto");
+    router.push("/pages/productRegistration");
+  };
+
+  const handleSaveEdit = async () => {
+    if (currentProduct) {
+      try {
+        await api.put(`/produtos/${currentProduct.id}`, {
+          produtoTitle: editedName,
+          valor: editedValue,
+        });
+        setProducts(products.map((prod) =>
+          prod.id === currentProduct.id ? { ...prod, produtoTitle: editedName, valor: editedValue } : prod
+        ));
+        setOpenDialog(false);  
+        Swal.fire('Produto atualizado!', '', 'success');
+      } catch (error) {
+        console.log('Erro ao atualizar produto:', error);
+        Swal.fire('Erro!', 'Ocorreu um erro ao atualizar o produto.', 'error');
+      }
+    }
   };
 
   return (
@@ -123,6 +201,35 @@ const ProductsPage = () => {
           )}
         </div>
       </div>
+
+      <Dialog open={openDialog} onClose={() => setOpenDialog(false)} aria-labelledby="edit-product-dialog">
+        <DialogTitle id="edit-product-dialog">Editar Produto</DialogTitle>
+        <DialogContent>
+          <TextField
+            label="Nome do Produto"
+            fullWidth
+            value={editedName}
+            onChange={(e) => setEditedName(e.target.value)}
+            margin="normal"
+          />
+          <TextField
+            label="Valor"
+            type="number"
+            fullWidth
+            value={editedValue}
+            onChange={(e) => setEditedValue(Number(e.target.value))}
+            margin="normal"
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenDialog(false)} color="secondary">
+            Cancelar
+          </Button>
+          <Button onClick={handleSaveEdit} color="primary">
+            Salvar
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };

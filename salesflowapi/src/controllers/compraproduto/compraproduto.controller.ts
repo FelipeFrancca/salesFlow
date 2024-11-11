@@ -20,7 +20,7 @@ export class CompraProdutoController {
   async removeProductFromCompra(@Param('id') id: number): Promise<void> {
     return this.compraProdutoService.removeProductFromCompra(id);
   }
-
+  
   @Put(':id')
   async updateCompraProduto(
     @Param('id') id: number,

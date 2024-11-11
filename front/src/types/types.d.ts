@@ -5,7 +5,7 @@ declare global {
     compraDesc: string;
     valor: number;
     data: Date;
-    compras: Array<VendaType>;
+    compraProdutos?: CompraProdutoType[];
   }
 
   export interface VendaType {
@@ -31,6 +31,8 @@ declare global {
 
   export interface CompraProdutoType {
     id: number;
+    quantidade: number;
+    preco: number;
     produtoId: number;
     compraId: number;
     produto: ProdutoType;

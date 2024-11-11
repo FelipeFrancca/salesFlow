@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Delete, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, Delete, Param, Put } from '@nestjs/common';
 import { ProdutoService } from '../../services/produto/produto.service';
 import { Produto } from '../../components/entities/produto.entity';
 import { ApiResponse } from '../../types/types';
@@ -10,7 +10,6 @@ export class ProdutoController {
   @Get()
   async findAll(): Promise<ApiResponse<Produto[]>> {
     const produtos = await this.produtoService.findAll();
-
     return {
       data: produtos,
       status: 200,
@@ -29,6 +28,26 @@ export class ProdutoController {
     if (result) {
       return {
         data: undefined,
+        status: 200,
+      };
+    } else {
+      return {
+        data: undefined,
+        status: 404,
+      };
+    }
+  }
+
+  @Put(':id')
+  async update(
+    @Param('id') id: number,
+    @Body() produto: Produto,
+  ): Promise<ApiResponse<Produto>> {
+    const updatedProduto = await this.produtoService.update(id, produto);
+
+    if (updatedProduto) {
+      return {
+        data: updatedProduto,
         status: 200,
       };
     } else {

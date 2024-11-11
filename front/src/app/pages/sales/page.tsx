@@ -1,16 +1,24 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { Button } from "@mui/material";
 import SalesListCard from "./components/SalesListCard";
 import SalesListTable from "./components/SalesListTable";
+import NewSale from "./components/NewSale";
 import CardIcon from '@mui/icons-material/ViewComfy';
 import TableIcon from "@mui/icons-material/TableRows";
 
 const SalesList: React.FC = () => {
   const [viewMode, setViewMode] = useState<"cards" | "table">("cards");
-  const router = useRouter();
+  const [isNewSaleOpen, setIsNewSaleOpen] = useState(false);
+
+  const handleNewSaleOpen = () => {
+    setIsNewSaleOpen(true);
+  };
+
+  const handleNewSaleClose = () => {
+    setIsNewSaleOpen(false);
+  };
 
   useEffect(() => {
     const savedViewMode = localStorage.getItem("viewMode") as "cards" | "table";
@@ -26,6 +34,20 @@ const SalesList: React.FC = () => {
   return (
     <div className="flex flex-col items-end w-3/5">
       <div className="flex gap-4 w-full justify-end mb-4">
+        <Button
+          sx={{
+            backgroundColor: "#9CA3AF",
+            color: "#FFFFFF",
+            "&:hover": {
+              backgroundColor: "#6B7280",
+            },
+          }}
+          variant="contained"
+          size="small"
+          onClick={handleNewSaleOpen}
+        >
+          Nova venda
+        </Button>
         <div className="flex gap-4">
           <Button
             sx={{
@@ -57,7 +79,11 @@ const SalesList: React.FC = () => {
           </Button>
         </div>
       </div>
+
       {viewMode === "cards" ? <SalesListCard /> : <SalesListTable />}
+
+      {/* Exibe o formulário de nova venda quando isNewSaleOpen é true */}
+      {isNewSaleOpen && <NewSale onClose={handleNewSaleClose} />}
     </div>
   );
 };

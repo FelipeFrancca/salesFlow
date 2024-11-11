@@ -55,7 +55,7 @@ const Dashboard: React.FC = () => {
               TransitionComponent={Zoom}
               className="m-2"
             >
-              <IconButton href="/pages/car" className="rounded-full">
+              <IconButton href="/pages/cart" className="rounded-full">
                 <Typography variant="h6" className="font-bold text-black">
                   <CarrinhoIcon />
                 </Typography>

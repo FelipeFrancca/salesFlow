@@ -4,12 +4,14 @@ import {
   Column,
   OneToMany,
   ManyToOne,
+  Index,
 } from 'typeorm';
 import { Venda } from './venda.entity';
 import { CompraProduto } from './compraproduto.entity';
 import { CompraType } from '../../types/types';
 
 @Entity()
+@Index('IDX_VENDA', ['venda'])
 export class Compra implements CompraType {
   @PrimaryGeneratedColumn()
   id: number;

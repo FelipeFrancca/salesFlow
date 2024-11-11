@@ -5,7 +5,7 @@ import { Button, TextField, Snackbar, Alert } from "@mui/material";
 import api from "../../../services/AppRoutes";
 import { useRouter } from "next/navigation";
 
-// Função para formatar o valor com separador de milhar
+
 const formatCurrency = (value: string): string => {
   const sanitizedValue = value.replace(/\D/g, "");
   const numberValue = Number(sanitizedValue);
@@ -21,14 +21,14 @@ const CadastroProduto: FC = () => {
   const [errorMessage, setErrorMessage] = useState<string>('');
   const router = useRouter();
 
-  // Função para enviar o formulário
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const sanitizedValor = valor.replace(/\D/g, "");
 
     const valorNumber = parseFloat(sanitizedValor);
     
-    // Verificação se o valor está dentro da faixa permitida
+    
     if (!produtoTitle || !sanitizedValor || valorNumber < 0 || valorNumber > 20000) {
       setErrorMessage("Por favor, insira um valor entre R$ 0 e R$ 20.000.");
       return;
@@ -53,13 +53,13 @@ const CadastroProduto: FC = () => {
     }
   };
 
-  // Função para lidar com mudanças no campo de valor
+  
   const handleValorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
     const sanitizedValue = inputValue.replace(/\D/g, "");
     const valueNumber = Number(sanitizedValue);
 
-    // Permitir apenas valores entre 0 e 20.000
+    
     if (valueNumber >= 0 && valueNumber <= 20000) {
       const formattedValue = formatCurrency(inputValue);
       setValor(formattedValue);

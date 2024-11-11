@@ -16,8 +16,8 @@ PORT=4000
 NODE_ENV=development
 
 ### Iniciar aplicação:
-Start back api: npm run start:dev
-Start front: npm run start:dev
+<p>Start back api: npm run start:dev</p>
+<p>Start front: npm run start:dev</p>
 
-### Em src/app.module.ts:
-synchronize: true, // Cria as tabelas automaticamente, desativar em produção caso necessário.
+### Caso tenha o interesse de colocar o projeto no online:
+Em /salesflowapi/src/app.module.ts: O comando "synchronize: true" cria as tabelas automaticamente, desativar em produção caso necessário.

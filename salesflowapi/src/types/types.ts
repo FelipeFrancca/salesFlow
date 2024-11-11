@@ -7,6 +7,7 @@ export interface VendaType {
   compras: CompraType[];
 }
 
+
 export interface CompraType {
   id: number;
   compraTitle: string;
@@ -16,6 +17,7 @@ export interface CompraType {
   venda: VendaType;
   compraProdutos: CompraProdutoType[];
 }
+
 
 export interface ProdutoType {
   id: number;

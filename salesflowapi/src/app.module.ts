@@ -4,6 +4,7 @@ import { ConfigModule } from '@nestjs/config';
 import { VendaModule } from './modules/venda.module';
 import { CompraModule } from './modules/compra.module';
 import { ProdutoModule } from './modules/produto.module';
+import { CompraProdutoModule } from './modules/compraproduto.module';
 import { SeedModule } from './modules/seed.module';
 
 import { Venda } from './components/entities/venda.entity';
@@ -35,6 +36,7 @@ import { CompraProduto } from './components/entities/compraproduto.entity';
     VendaModule,
     CompraModule,
     ProdutoModule,
+    CompraProdutoModule,
     SeedModule,
   ],
 })

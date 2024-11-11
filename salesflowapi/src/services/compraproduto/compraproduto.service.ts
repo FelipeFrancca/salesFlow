@@ -17,9 +17,8 @@ export class CompraProdutoService {
     return this.compraProdutoRepository.save(compraProduto);
   }
 
-  async removeProductFromCompra(compraProdutoId: number): Promise<void> {
-    const compraProduto = await this.findOne(compraProdutoId);
-    await this.compraProdutoRepository.remove(compraProduto);
+  async removeProductFromCompra(id: number): Promise<void> {
+    await this.compraProdutoRepository.delete(id);
   }
 
   async updateCompraProduto(compraProdutoId: number, produto: Produto): Promise<CompraProduto> {
