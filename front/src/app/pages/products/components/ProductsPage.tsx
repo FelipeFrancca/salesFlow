@@ -1,24 +1,18 @@
 "use client";
 
 import { FC, useState, useEffect } from "react";
+import { useCart } from "../../cart/CartContext";
+import { useRouter } from "next/navigation";
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from "@mui/material";
 import AddIcon from "@mui/icons-material/PostAdd";
 import { Spinner } from "@material-tailwind/react";
 import BrokenImageIcon from "@mui/icons-material/BrokenImage";
 import api from "../../../../services/AppRoutes";
-import { useRouter } from "next/navigation";
 import Slider from "@mui/material/Slider";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Swal from "sweetalert2"; 
-
-const formatCurrency = (value: number | string): string => {
-  const numberValue = typeof value === 'string' ? parseFloat(value) : value;
-  return new Intl.NumberFormat("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-  }).format(numberValue);
-};
+import { FormatCurrency } from "../../utils/formatCurrency";
 
 const ProductsPage = () => {
   const [products, setProducts] = useState<ProdutoType[]>([]);
@@ -65,10 +59,21 @@ const ProductsPage = () => {
   });
 
   const ProductCard: FC<{ product: ProdutoType }> = ({ product }) => {
-    const [cart, setCart] = useState<ProdutoType[]>([]);
+    const { addToCart, cart } = useCart();
 
-    const handleAddToCart = (product: ProdutoType) => {
-      setCart((prevCart) => [...prevCart, product]);
+    const handleAddToCart = () => {
+      addToCart({ id: product.id, produtoTitle: product.produtoTitle, valor: product.valor });
+      console.log("Carrinho Atualizado: ", cart);
+      
+      Swal.fire({
+        title: 'Produto adicionado!',
+        text: `${product.produtoTitle} foi adicionado ao seu carrinho.`,
+        icon: 'success',
+        timer: 1500,
+        showConfirmButton: false,
+        toast: true,
+        position: 'top-end',
+      });
     };
     
     const handleEditProduct = (product: ProdutoType) => {
@@ -104,28 +109,13 @@ const ProductsPage = () => {
 
     return (
       <div className="w-52 p-4 bg-white rounded-lg shadow-md flex flex-col items-center justify-center text-center">
-        <BrokenImageIcon style={{ fontSize: 50 }} className="text-gray-300" />
-        <h3 className="text-lg font-semibold">{product.produtoTitle}</h3>
-        <p className="text-purple-700">{formatCurrency(product.valor)}</p> {/* Aqui formata o valor */}
-        <div className="mt-2 flex gap-2">
-          <Button
-            onClick={() => handleEditProduct(product)}
-            variant="contained"
-            color="primary"
-            size="small"
-          >
-            <EditIcon />
-          </Button>
-          <Button
-            onClick={() => handleDeleteProduct(product.id)}
-            variant="contained"
-            color="error"
-            size="small"
-          >
-            <DeleteIcon />
-          </Button>
-        </div>
-      </div>
+      <BrokenImageIcon style={{ fontSize: 50 }} className="text-gray-300" />
+      <h3 className="text-lg font-semibold">{product.produtoTitle}</h3>
+      <p className="text-purple-700">{FormatCurrency(product.valor)}</p>
+      <Button onClick={handleAddToCart} variant="contained" color="primary" size="small">
+        Adicionar ao Carrinho
+      </Button>
+    </div>
     );
   };
 

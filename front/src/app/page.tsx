@@ -1,10 +1,15 @@
 import React from 'react';
 import SalesList from './pages/sales/page';
+import { CartProvider } from './pages/cart/CartContext';
 
-export default function Home() {
+const Home: React.FC = () => {
   return (
-    <div className="flex items-center justify-center mt-40">
-      <SalesList />
-    </div>
+    <CartProvider>
+      <div className="flex items-center justify-center mt-40">
+        <SalesList />
+      </div>
+    </CartProvider>
   );
-}
+};
+
+export default Home;

@@ -1,6 +1,7 @@
 import React from 'react';
 import Dashboard from './Dashboard';
 import './assets/globals.css';
+import { CartProvider } from './pages/cart/CartContext';
 
 export const metadata = {
   title: 'Sales Flow',
@@ -14,11 +15,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="pt-BR">
-      
       <body>
-        {children}
-        <Dashboard />
+        <CartProvider>
+          {children}
+          <Dashboard />
+        </CartProvider>
       </body>
     </html>
-  )
+  );
 }
